@@ -1,0 +1,12 @@
+[Unit]
+Description=Regex daemon for BlueField 2
+
+[Service]
+Type=forking
+PIDFile=mlx-regex.pid
+ExecStart=/usr/bin/mlx-regex
+RemainAfterExit=no
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target

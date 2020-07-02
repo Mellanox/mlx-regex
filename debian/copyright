@@ -1,0 +1,28 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: mlx-regex
+Source: <url://example.com>
+#
+# Please double check copyright with the licensecheck(1) command.
+
+Files:     .gitignore
+           CMakeLists.txt
+           README.md
+           mlx-regex.service
+           src/CMakeLists.txt
+Copyright: __NO_COPYRIGHT_NOR_LICENSE__
+License:   __NO_COPYRIGHT_NOR_LICENSE__
+
+Files:     rehl/mlx-regex.spec
+           src/mlx5_regex.c
+           src/mlx5_regex_ifc.h
+Copyright: 2019-2020 Mellanox Technologies.
+License:   __NO_LICENSE__
+
+Files:     src/devx_prm.h
+Copyright: 2001-2018 Mellanox Technologies Ltd,
+License:   __UNKNOWN__
+ See file LICENSE for terms.
+
+#----------------------------------------------------------------------------
+# Files marked as NO_LICENSE_TEXT_FOUND may be covered by the following
+# license/copyright files.
