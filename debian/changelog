@@ -1,5 +1,13 @@
-mlx-regex (1.0-1) UNRELEASED; urgency=low
+mlx-regex (1.1-1ubuntu1) UNRELEASED; urgency=low
+
+  * Moved daemon to be simple
+
+ -- Yuval Avnery <yuvalav@nvidia.com>  Tue, 03 Nov 2020 08:05:11 +0200
+
+mlx-regex (1.0-1ubuntu1) UNRELEASED; urgency=low
 
   * Initial release. Closes: #nnnn
     <nnnn is the bug number of your ITP>
+  * 
 
+ -- Yuval Avnery <yuvalav@nvidia.com>  Tue, 03 Nov 2020 08:05:11 +0200
