@@ -1,4 +1,4 @@
-mlx-regex (1.1-1ubuntu1) UNRELEASED; urgency=low
+* mlx-regex (1.1-1ubuntu1) UNRELEASED; urgency=low
 
   * Moved daemon to be simple
 
