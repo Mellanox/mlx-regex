@@ -225,8 +225,6 @@ rxp_create_mkey(struct mlx5_regex_ctx *ctx, void *ptr, size_t size,
         }
         tmp_mkey = calloc(1, sizeof(*tmp_mkey));
 
-        syslog(LOG_ERR, "GERRY: tmp_mkey = %p\n", tmp_mkey);
-
 	if (!tmp_mkey) {
                 syslog(LOG_ERR, "Failed to allocate memory!\n");
 		return -ENOMEM;
@@ -246,8 +244,6 @@ rxp_create_mkey(struct mlx5_regex_ctx *ctx, void *ptr, size_t size,
 		return -ENODEV;
 	}
 
-        syslog(LOG_ERR, "GERRY: mkey->umem->umem_id = 0x%x\n", (mkey->umem)->umem_id);
-
 	mkey_attr = (struct mlx5_devx_mkey_attr) {
 		.addr = (uintptr_t)ptr,
 		.size = (uint32_t)size,
@@ -257,12 +253,12 @@ rxp_create_mkey(struct mlx5_regex_ctx *ctx, void *ptr, size_t size,
 		.pd = pdn,
 	};
 
-translation_size = (RTE_ALIGN(mkey_attr.size, pgsize) * 8) / 16;
+        translation_size = (RTE_ALIGN(mkey_attr.size, pgsize) * 8) / 16;
         DEVX_SET(create_mkey_in, in, opcode, MLX5_CMD_OP_CREATE_MKEY);
 
         mkc = MLX5_ADDR_OF(create_mkey_in, in, memory_key_mkey_entry);
 
-DEVX_SET(mkc, mkc, log_page_size, rte_log2_u32(pgsize));
+        DEVX_SET(mkc, mkc, log_page_size, rte_log2_u32(pgsize));
         DEVX_SET(mkc, mkc, access_mode_1_0, MLX5_MKC_ACCESS_MODE_MTT);
 
         DEVX_SET(create_mkey_in, in, mkey_umem_id, mkey_attr.umem_id);
@@ -284,9 +280,6 @@ DEVX_SET(mkc, mkc, log_page_size, rte_log2_u32(pgsize));
         DEVX_SET64(mkc, mkc, start_addr, mkey_attr.addr);
 	DEVX_SET64(mkc, mkc, len, mkey_attr.size);
 
-        //DEVX_SET(mkc, mkc, crypto_en, 0);
-
-        syslog(LOG_ERR, "GERRY: calling mlx5dv_devx_obj_create for mkey->mkey\n");
         tmp_mkey->obj = mlx5dv_devx_obj_create(ctx->ibv_ctx, in, sizeof(in), out, sizeof(out));
 	if (!tmp_mkey->obj) {
                 syslog(LOG_ERR, "Failed to create direct mkey!!\n");
@@ -295,15 +288,8 @@ DEVX_SET(mkc, mkc, log_page_size, rte_log2_u32(pgsize));
         tmp_mkey->id = DEVX_GET(create_mkey_out, out, mkey_index);
         tmp_mkey->id = (tmp_mkey->id << 8) | (mkey_attr.umem_id & 0xFF);
 
-        syslog(LOG_ERR, "GERRY: tmp_mkey->obj = %p\n", tmp_mkey->obj);
-        syslog(LOG_ERR, "GERRY: tmp_mkey->id = 0x%x\n", tmp_mkey->id);
-
         mkey->mkey = tmp_mkey;
 
-        syslog(LOG_ERR, "GERRY: mkey->mkey = %p\n", mkey->mkey);
-        syslog(LOG_ERR, "GERRY: mkey->ptr = %p\n", mkey->ptr);
-        syslog(LOG_ERR, "GERRY: mkey->mkey->id = 0x%x\n", mkey->mkey->id);
-        syslog(LOG_ERR, "GERRY - leaving rxp_create_mkey\n");
 	return 0;
 }
 
@@ -312,17 +298,11 @@ rxp_destroy_mkey(struct mlx5_regex_mkey *mkey)
 {
     int tmp = 0 ;
 
-        syslog(LOG_NOTICE,"GERRY: in rxp_destroy_mkey for mlx5_regex_mkey 0x%x\n", mkey);
-        syslog(LOG_NOTICE,"GERRY: in     meky->ptr = %p\n", mkey->ptr);
-        syslog(LOG_NOTICE,"GERRY: in     meky->umem = %p\n", mkey->umem);
-        syslog(LOG_NOTICE,"GERRY: in     meky->mkey = %p\n", mkey->mkey);
 	if (mkey->mkey)
 		tmp = mlx5dv_devx_obj_destroy(mkey->mkey->obj);
-        syslog(LOG_NOTICE,"GERRY: destroyed mkey for 0x%x, ret = %d\n", mkey->mkey, tmp);
 
 	if (mkey->umem)
                 tmp = mlx5dv_devx_umem_dereg(mkey->umem);
-        syslog(LOG_NOTICE,"GERRY: deregister umem for 0x%x, ret = %dx\n", mkey->umem, tmp);
 }
 
 
@@ -369,7 +349,6 @@ mlx5_regex_is_supported(struct ibv_context *ibv_ctx)
 	if (err)
 		return 0;
 
-        syslog(LOG_ERR, "GERRY: regex is supported\n");
 	return caps.supported;
 }
 
@@ -380,13 +359,11 @@ mlx5_devx_regex_database_disconnect(void *ctx, uint8_t engine, uint32_t db_mkey,
 	uint32_t in[DEVX_ST_SZ_DW(set_regexp_params_in)] = {0};
 	int err = 0;
 
-        syslog(LOG_ERR, "GERRY: disconnecting db_mkey = 0x%x, db_key_va = %p\n", db_mkey, db_mkey_va);
 	DEVX_SET(set_regexp_params_in, in, opcode, MLX5_CMD_SET_REGEX_PARAMS);
 	DEVX_SET(set_regexp_params_in, in, engine_id, engine);
         DEVX_SET(set_regexp_params_in, in, regexp_params.stop_engine, 1);
         DEVX_SET(set_regexp_params_in, in, field_select.stop_engine, 1);
 	DEVX_SET(set_regexp_params_in, in, regexp_params.db_mkey, db_mkey);
-	//DEVX_SET64(set_regexp_params_in, in, regexp_params.db_mkey_free, 1);
 	DEVX_SET(set_regexp_params_in, in, regexp_params.db_mkey_free, 1);
 	DEVX_SET64(set_regexp_params_in, in, regexp_params.db_mkey_va, db_mkey_va);
 	DEVX_SET(set_regexp_params_in, in, field_select.db_mkey, 1);
@@ -409,27 +386,22 @@ mlx5_regex_database_set(struct mlx5_regex_ctx *ctx, int engine_id)
 	DEVX_SET(set_regexp_params_in, in, opcode, MLX5_CMD_SET_REGEX_PARAMS);
 	DEVX_SET(set_regexp_params_in, in, engine_id, engine_id);
 
-        syslog(LOG_ERR, "GERRY: mlx5_regex_database_set 2, engine id = %d \n", engine_id);
 	DEVX_SET(set_regexp_params_in, in, regexp_params.stop_engine, 1);
 	DEVX_SET(set_regexp_params_in, in, field_select.stop_engine, 1);
 
-        syslog(LOG_ERR, "GERRY: mlx5_regex_database_set 3, db_mkey = %p, id = 0x%x, va = %p \n", ctx->db_ctx[engine_id].mem_desc.mkey,ctx->db_ctx[engine_id].mem_desc.mkey->id, ctx->db_ctx[engine_id].mem_desc.ptr);
 
 	DEVX_SET(set_regexp_params_in, in, regexp_params.db_mkey, ctx->db_ctx[engine_id].mem_desc.mkey->id);
 	DEVX_SET64(set_regexp_params_in, in, regexp_params.db_mkey_va, ctx->db_ctx[engine_id].mem_desc.ptr);
 	/*  Currently not supported
 		DEVX_SET64(set_regexp_params_in, in, regexp_params.db_umem_offset, ctx->db_ctx[engine_id].offset); */
-        syslog(LOG_ERR, "GERRY: mlx5_regex_database_set 4 \n");
 	DEVX_SET(set_regexp_params_in, in, field_select.db_mkey, 1);
 
-        syslog(LOG_ERR, "GERRY: calling mlx5dv_devx_general_cmd\n");
 	if (debug) print_raw(in, 1);
 	err = mlx5dv_devx_general_cmd(ctx->ibv_ctx, in, sizeof(in), out, sizeof(out));
 	if (err) {
 		syslog(LOG_ERR, "Set regexp params failed %d\n", err);
 		return err;
 	}
-        syslog(LOG_ERR, "GERRY: called mlx5dv_devx_general_cmd\n");
 	return 0;
 }
 
@@ -508,23 +480,10 @@ int register_database(struct mlx5_regex_ctx* ctx, int engine_id)
 		return -ENOMEM;
 	}
 
-        syslog(LOG_ERR, "GERRY: mmap success for engine id %d, ptr = %p\n", engine_id,
-                                    ctx->db_ctx[engine_id].mem_desc.ptr);
-
 	/* Register the umem and create mkey */
 
         ret = rxp_create_mkey(ctx, ctx->db_ctx[engine_id].mem_desc.ptr, db_size, 7, &ctx->db_ctx[engine_id].mem_desc);
 
-        syslog(LOG_ERR, "GERRY: mem_desc = %p, mkey = %p\n", ctx->db_ctx[engine_id].mem_desc, ctx->db_ctx[engine_id].mem_desc.mkey);
-        syslog(LOG_ERR, "GERRY: mkey->obj = %p, mkey->id = 0x%x\n", ctx->db_ctx[engine_id].mem_desc.mkey->obj, ctx->db_ctx[engine_id].mem_desc.mkey->id);
-#if 0
-	ctx->db_ctx[engine_id].mem_desc.umem =
-			mlx5dv_devx_umem_reg(ctx->ibv_ctx,
-					     ctx->db_ctx[engine_id].mem_desc.ptr,
-					     db_size, 7);
-#endif
-	
-	//if (!ctx->db_ctx[engine_id].mem_desc.umem) {
 	if (ret < 0) {
 		syslog(LOG_ERR,"Registration failed.\n");
 		syslog(LOG_ERR,"Please make sure huge pages in the system\n");
@@ -532,9 +491,8 @@ int register_database(struct mlx5_regex_ctx* ctx, int engine_id)
 		syslog(LOG_ERR,"      echo NUM_PAGES > /proc/sys/vm/nr_hugepages\n");
 		return -ENOMEM;
 	}
-        syslog(LOG_ERR, "GERRY: mlx5dv_create_mkey completed\n");
+
 	memset(ctx->db_ctx[engine_id].mem_desc.ptr, 0, db_size);
-        syslog(LOG_ERR, "GERRY: mlx5dv_create_mkey completed, memset done\n");
 	return 0;
 }
 
@@ -562,19 +520,17 @@ void handle_signal(int sig)
                                  ctx_ptr->db_ctx[i].mem_desc.ptr );
 
                 if (err)
-                    syslog(LOG_ERR, "GERRY: disconnecting db err = %d for engine %d\n", err, i);
+                    syslog(LOG_ERR, "Disconnecting db err = %d for engine %d\n", err, i);
 
-                syslog(LOG_NOTICE, "GERRY: Destroying db mkey for engine %d\n", i);
 
-                    rxp_destroy_mkey(&ctx_ptr->db_ctx[i].mem_desc);
+                rxp_destroy_mkey(&ctx_ptr->db_ctx[i].mem_desc);
 
-                syslog(LOG_NOTICE, "GERRY: Freeing mkey memory for engine %d\n", i);
                 free(ctx_ptr->db_ctx[i].mem_desc.mkey);
 
-                syslog(LOG_NOTICE, "GERRY: Unmapping memory for engine id %d\n", i);
                 err = munmap(ctx_ptr->db_ctx[i].mem_desc.ptr, 1 << 27); 
-                syslog(LOG_NOTICE, "GERRY: Unmapping memory returned %d\n", err);
 
+                if (err)
+                    syslog(LOG_ERR, "Munmap err = %d for engine %d\n", err, i);
                 }
 
                 exit(err);
@@ -616,7 +572,6 @@ int mlx5_regex_ctx_init(struct ibv_context *ibv_ctx, struct mlx5_regex_ctx *ctx)
 	ctx->ibv_ctx = ibv_ctx;
 
         ctx->pd = regex_alloc_pd(ibv_ctx);
-        syslog(LOG_ERR, "GERRY: pd = %p.\n", ctx->pd);
         if (!ctx->pd) {
                 syslog(LOG_ERR, "Devx not supported.\n");
 		return -ENOMEM;
@@ -625,14 +580,12 @@ int mlx5_regex_ctx_init(struct ibv_context *ibv_ctx, struct mlx5_regex_ctx *ctx)
 	mlx5_regex_query_cap(ctx->ibv_ctx, &ctx->caps);
 
 
-        syslog(LOG_ERR, "GERRY: caps.num_of_engines = %d", ctx->caps.num_of_engines);
 	ctx->db_ctx = malloc(sizeof(*ctx->db_ctx)*ctx->caps.num_of_engines);
 	for (i = 0; i < ctx->caps.num_of_engines; i++) {
 		err = register_database(ctx, i);
-	        syslog(LOG_ERR, "GERRY: err = %d\n", err);		
 		if (err)
 			return err;
-	        syslog(LOG_ERR, "GERRY: calling mlx5_regex_database_set\n");		
+
 		err = mlx5_regex_database_set(ctx, i);
 		if (err)
 			return err;
@@ -662,14 +615,11 @@ int main()
 		return -1;
 	}
 
-        syslog(LOG_NOTICE, "GERRY: %d devices found\n", num);
-
 	attr.flags = MLX5DV_CONTEXT_FLAGS_DEVX;
 
 	for (i = 0; i < num; i++)
 		if (mlx5dv_is_supported(list[devn])) {
 			ibv_ctx = mlx5dv_open_device(list[devn], &attr);
-		        syslog(LOG_NOTICE, "GERRY: ibv_ctx = %p, i = %d\n", ibv_ctx, i);
 			if (ibv_ctx == NULL) {
  					syslog(LOG_ERR, "Devx not supported. 1\n");
                 	return -EOPNOTSUPP;
