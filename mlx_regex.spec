@@ -3,12 +3,12 @@
 #
 
 Name:           mlx-regex
-Version:        1.1
+Version:        1.2
 Release:        1%{?dist}
 
 License:        BSD
 URL:            mellanox.com
-Source0:        mlx-regex-1.1.tar.gz
+Source0:        mlx-regex-1.2.tar.gz
 Summary:        Userspace regex service for Mellanox Bluefield 2
 BuildRequires:  gcc, cmake, make
 BuildRequires:  systemd
