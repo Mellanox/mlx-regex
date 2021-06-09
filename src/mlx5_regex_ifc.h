@@ -1,7 +1,15 @@
-/* SPDX-License-Identifier: GPL-2.0-only
- * Copyright (C) 2019 Mellanox Technologies. All Rights Reserved.
+/*
+ * Copyright (c) 2021 Mellanox Technologies, Ltd. ALL RIGHTS RESERVED.
+ *
+ * This software product is a proprietary product of Mellanox Technologies Ltd.
+ * (the "Company") and all right, title, and interest in and to the software
+ * product, including all associated intellectual property rights, are and
+ * shall remain exclusively with the Company.
+ *
+ * This software product is governed by the End User License Agreement
+ * provided with the software product.
+ *
  */
-
 
 #ifndef MLX5_REGEX_IFC_H
 #define MLX5_REGEX_IFC_H
@@ -79,7 +87,7 @@
 
 
 enum mlx5_cap_mode {
-        HCA_CAP_OPMOD_GET_CUR   = 1
+	HCA_CAP_OPMOD_GET_CUR   = 1
 };
 
 enum {
@@ -88,7 +96,7 @@ enum {
 
 enum {
 	MLX5_CMD_OP_QUERY_HCA_CAP                 = 0x100,
-        MLX5_CMD_OP_CREATE_MKEY = 0x200,
+	MLX5_CMD_OP_CREATE_MKEY                   = 0x200,
 	MLX5_CMD_SET_REGEX_PARAMS		  = 0xb04,
 	MLX5_CMD_QUERY_REGEX_PARAMS		  = 0xb05,
 	MLX5_CMD_SET_REGEX_REGISTERS		  = 0xb06,
@@ -394,40 +402,22 @@ union mlx5_ifc_hca_cap_union_bits {
 	u8         reserved_at_0[0x8000];
 };
 
-#if 0
-union mlx5_ifc_hca_cap_union_bits {
-	struct mlx5_ifc_cmd_hca_cap_bits cmd_hca_cap;
-	struct mlx5_ifc_per_protocol_networking_offload_caps_bits
-	       per_protocol_networking_offload_caps;
-	struct mlx5_ifc_qos_cap_bits qos_cap;
-	struct mlx5_ifc_virtio_emulation_cap_bits vdpa_caps;
-	struct mlx5_ifc_flow_table_nic_cap_bits flow_table_nic_cap;
-	struct mlx5_ifc_roce_caps_bits roce_caps;
-	u8 reserved_at_0[0x8000];
-};
-#endif
-
 struct mlx5_ifc_query_hca_cap_out_bits {
 	u8         status[0x8];
 	u8         reserved_at_8[0x18];
-
 	u8         syndrome[0x20];
-
 	u8         reserved_at_40[0x40];
-
 	union mlx5_ifc_hca_cap_union_bits capability;
 };
 
 struct mlx5_ifc_query_hca_cap_in_bits {
 	u8         opcode[0x10];
 	u8         uid[0x10];
-
 	u8         reserved_at_20[0x10];
 	u8         op_mod[0x10];
-	u8		   other_function[0x1];
-	u8		   reserved_at_30[0xf];
-	u8		   function_id[0x10];
-
+	u8         other_function[0x1];
+	u8         reserved_at_30[0xf];
+	u8         function_id[0x10];
 	u8         reserved_at_40[0x20];
 };
 
@@ -439,10 +429,10 @@ struct regexp_params_field_select_bits {
 };
 
 struct mlx5_ifc_regexp_params_bits {
-	u8         db_mkey_free[0x1];
-	u8         reserved_at_0[0x1e];
-	u8         stop_engine[0x1];
-        u8 db_mkey[0x20];
+	u8 db_mkey_free[0x1];
+	u8 reserved_at_0[0x1e];
+	u8 stop_engine[0x1];
+	u8 db_mkey[0x20];
 	u8 db_mkey_va[0x40];
 	u8 rof_mkey[0x20];
 	u8 rof_size[0x20];
@@ -453,10 +443,8 @@ struct mlx5_ifc_regexp_params_bits {
 struct mlx5_ifc_set_regexp_params_in_bits {
 	u8         opcode[0x10];
 	u8         uid[0x10];
-
 	u8         reserved_at_20[0x10];
 	u8         op_mod[0x10];
-
 	u8         reserved_at_40[0x18];
 	u8         engine_id[0x8];
 	struct regexp_params_field_select_bits field_select;
@@ -466,7 +454,6 @@ struct mlx5_ifc_set_regexp_params_in_bits {
 struct mlx5_ifc_set_regexp_params_out_bits {
 	u8         status[0x8];
 	u8         reserved_at_8[0x18];
-
 	u8         syndrome[0x20];
 	u8         reserved_at_18[0x40];
 };
@@ -474,10 +461,8 @@ struct mlx5_ifc_set_regexp_params_out_bits {
 struct mlx5_ifc_query_regexp_params_in_bits {
 	u8         opcode[0x10];
 	u8         uid[0x10];
-
 	u8         reserved_at_20[0x10];
 	u8         op_mod[0x10];
-
 	u8         reserved_at_40[0x18];
 	u8         engine_id[0x8];
 	u8         reserved[0x20];
@@ -486,7 +471,6 @@ struct mlx5_ifc_query_regexp_params_in_bits {
 struct mlx5_ifc_query_regexp_params_out_bits {
 	u8         status[0x8];
 	u8         reserved_at_8[0x18];
-
 	u8         syndrome[0x20];
 	u8         reserved[0x40];
 	struct mlx5_ifc_regexp_params_bits regexp_params;
@@ -495,10 +479,8 @@ struct mlx5_ifc_query_regexp_params_out_bits {
 struct mlx5_ifc_set_regexp_register_in_bits {
 	u8         opcode[0x10];
 	u8         uid[0x10];
-
 	u8         reserved_at_20[0x10];
 	u8         op_mod[0x10];
-
 	u8         reserved_at_40[0x18];
 	u8         engine_id[0x8];
 	u8         register_address[0x20];
@@ -509,7 +491,6 @@ struct mlx5_ifc_set_regexp_register_in_bits {
 struct mlx5_ifc_set_regexp_register_out_bits {
 	u8         status[0x8];
 	u8         reserved_at_8[0x18];
-
 	u8         syndrome[0x20];
 	u8         reserved[0x40];
 };
@@ -517,10 +498,8 @@ struct mlx5_ifc_set_regexp_register_out_bits {
 struct mlx5_ifc_query_regexp_register_in_bits {
 	u8         opcode[0x10];
 	u8         uid[0x10];
-
 	u8         reserved_at_20[0x10];
 	u8         op_mod[0x10];
-
 	u8         reserved_at_40[0x18];
 	u8         engine_id[0x8];
 	u8         register_address[0x20];
@@ -529,7 +508,6 @@ struct mlx5_ifc_query_regexp_register_in_bits {
 struct mlx5_ifc_query_regexp_register_out_bits {
 	u8         status[0x8];
 	u8         reserved_at_8[0x18];
-
 	u8         syndrome[0x20];
 	u8         reserved[0x20];
 	u8         register_data[0x20];
@@ -569,8 +547,8 @@ struct mlx5_ifc_mkc_bits {
 	u8         reserved_at_120[0x80];
 	u8         translations_octword_size[0x20];
 	u8         reserved_at_1c0[0x19];
-	u8		   relaxed_ordering_read[0x1];
-	u8		   reserved_at_1da[0x1];
+	u8         relaxed_ordering_read[0x1];
+	u8         reserved_at_1da[0x1];
 	u8         log_page_size[0x5];
 	u8         reserved_at_1e0[0x20];
 };
@@ -602,9 +580,9 @@ struct mlx5_ifc_create_mkey_in_bits {
 };
 
 enum {
-        MLX5_MKC_ACCESS_MODE_MTT   = 0x1,
-        MLX5_MKC_ACCESS_MODE_KLM   = 0x2,
-        MLX5_MKC_ACCESS_MODE_KLM_FBS = 0x3,
+	MLX5_MKC_ACCESS_MODE_MTT     = 0x1,
+	MLX5_MKC_ACCESS_MODE_KLM     = 0x2,
+	MLX5_MKC_ACCESS_MODE_KLM_FBS = 0x3
 };
 
 #endif /* MLX5_REGEX_IFC_H */
