@@ -4,7 +4,7 @@ mlx-regex (1.2-ubuntu1) UNRELEASED; urgency=low
 
  -- Gerry Gribbon <ggribbon@nvidia.com>  Mon, 07 Jun 2021 08:29:11 -0500
 
-* mlx-regex (1.1-1ubuntu1) UNRELEASED; urgency=low
+mlx-regex (1.1-1ubuntu1) UNRELEASED; urgency=low
 
   * Moved daemon to be simple
 
