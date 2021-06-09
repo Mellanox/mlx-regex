@@ -29,33 +29,33 @@
 
 /**
  * Macro to align a value to a given power-of-two. The resultant value
- *  * will be of the same type as the first parameter, and will be no
- *   * bigger than the first parameter. Second parameter must be a
- *    * power-of-two value.
- *     */
+ * will be of the same type as the first parameter, and will be no
+ * bigger than the first parameter. Second parameter must be a
+ * power-of-two value.
+ */
 #define RTE_ALIGN_FLOOR(val, align) \
 	((typeof(val))((val) & (~((typeof(val))((align) - 1)))))
 
 /**
- *  * Macro to align a value to a given power-of-two. The resultant value
- *   * will be of the same type as the first parameter, and will be no lower
- *    * than the first parameter. Second parameter must be a power-of-two
- *     * value.
- *      */
+ * Macro to align a value to a given power-of-two. The resultant value
+ * will be of the same type as the first parameter, and will be no lower
+ * than the first parameter. Second parameter must be a power-of-two
+ * value.
+ */
 #define RTE_ALIGN_CEIL(val, align) \
 	RTE_ALIGN_FLOOR(((val) + ((typeof(val)) (align) - 1)), align)
 
 /**
  * Macro to align a value to a given power-of-two. The resultant
- *  * value will be of the same type as the first parameter, and
- *   * will be no lower than the first parameter. Second parameter
- *    * must be a power-of-two value.
- *     * This function is the same as RTE_ALIGN_CEIL
- *      */
+ * value will be of the same type as the first parameter, and
+ * will be no lower than the first parameter. Second parameter
+ * must be a power-of-two value.
+ * This function is the same as RTE_ALIGN_CEIL
+ */
 #define RTE_ALIGN(val, align) RTE_ALIGN_CEIL(val, align)
 
 
-int debug;
+static int debug;
 
 static inline uint32_t
 rte_bsf32(uint32_t v)
@@ -112,8 +112,8 @@ struct mlx5_devx_mkey_attr {
 	uint32_t umr_en:1;
 	uint32_t crypto_en:2;
 	uint32_t set_remote_rw:1;
-	//struct mlx5_klm *klm_array;
-	//int klm_num;
+	/* struct mlx5_klm *klm_array; */
+	/* int klm_num; */
 };
 
 struct mlx5_regex_mkey {
@@ -145,7 +145,8 @@ struct mlx5_regex_ctx {
 
 static struct mlx5_regex_ctx *ctx_ptr;
 
-static void print_raw(void *ptr, size_t size)
+static void
+print_raw(void *ptr, size_t size)
 {
 	uint32_t dump_index = 0;
 	size_t i, j;
@@ -384,7 +385,7 @@ mlx5_regex_database_set(struct mlx5_regex_ctx *ctx, int engine_id)
 
 
 	DEVX_SET(set_regexp_params_in, in, regexp_params.db_mkey, ctx->db_ctx[engine_id].mem_desc.mkey->id);
-	DEVX_SET64(set_regexp_params_in, in, regexp_params.db_mkey_va, ctx->db_ctx[engine_id].mem_desc.ptr);
+	DEVX_SET64(set_regexp_params_in, in, regexp_params.db_mkey_va, (uint64_t)ctx->db_ctx[engine_id].mem_desc.ptr);
 	/*
 	   Currently not supported
 		DEVX_SET64(set_regexp_params_in, in, regexp_params.db_umem_offset, ctx->db_ctx[engine_id].offset);
@@ -464,7 +465,8 @@ mlx5_regex_register_read(struct ibv_context *ctx, int engine_id,
 	return 0;
 }
 */
-int register_database(struct mlx5_regex_ctx *ctx, int engine_id)
+static int
+register_database(struct mlx5_regex_ctx *ctx, int engine_id)
 {
 	int ret;
 	/* alloc database 128MB */
@@ -494,27 +496,28 @@ int register_database(struct mlx5_regex_ctx *ctx, int engine_id)
 	return 0;
 }
 
-void handle_signal(int sig)
+static void
+handle_signal(int sig)
 {
 	int i;
 	int err = 0;
 
 	if (sig == SIGINT) {
-		syslog(LOG_NOTICE, "SIG_INIT recived...\n");
+		syslog(LOG_NOTICE, "SIG_INIT received...\n");
 		/* Reset signal handling to default behavior */
 		signal(SIGINT, SIG_DFL);
 	} else if (sig == SIGHUP) {
-		syslog(LOG_NOTICE, "SIG_HUP recived...\n");
+		syslog(LOG_NOTICE, "SIG_HUP received...\n");
 	} else if (sig == SIGCHLD) {
-		syslog(LOG_NOTICE, "SIG_CHLD recived...\n");
+		syslog(LOG_NOTICE, "SIG_CHLD received...\n");
 	} else if (sig == SIGTERM) {
-		syslog(LOG_NOTICE, "SIG_TERM recived...\n");
+		syslog(LOG_NOTICE, "SIG_TERM received...\n");
 
 		for (i = 0; i < ctx_ptr->caps.num_of_engines; i++) {
 
 			err = mlx5_devx_regex_database_disconnect(ctx_ptr->ibv_ctx, i,
 						ctx_ptr->db_ctx[i].mem_desc.mkey->id,
-						ctx_ptr->db_ctx[i].mem_desc.ptr);
+						(uint64_t)ctx_ptr->db_ctx[i].mem_desc.ptr);
 
 			if (err)
 				syslog(LOG_ERR, "Disconnecting db err = %d for engine %d\n", err, i);
@@ -537,9 +540,9 @@ void handle_signal(int sig)
 
 }
 
-static void daemonize(void)
+static void
+daemonize(void)
 {
-	pid_t pid;
 	int x;
 
 	/* Catch, ignore and handle signals */
@@ -562,7 +565,8 @@ static void daemonize(void)
 	openlog("regex", LOG_PID, LOG_DAEMON);
 }
 
-int mlx5_regex_ctx_init(struct ibv_context *ibv_ctx, struct mlx5_regex_ctx *ctx)
+static int
+mlx5_regex_ctx_init(struct ibv_context *ibv_ctx, struct mlx5_regex_ctx *ctx)
 {
 	int err;
 	size_t i;
@@ -590,7 +594,8 @@ int mlx5_regex_ctx_init(struct ibv_context *ibv_ctx, struct mlx5_regex_ctx *ctx)
 	return 0;
 }
 
-int main(void)
+int
+main(void)
 {
 	int num, devn = 0;
 	struct ibv_context *ibv_ctx = NULL;
@@ -623,7 +628,6 @@ int main(void)
 				return -EOPNOTSUPP;
 			}
 			if (ibv_ctx && mlx5_regex_is_supported(ibv_ctx)) {
-				syslog(LOG_ERR, "ibv_ctx and regex supported. 1\n");
 				err = mlx5_regex_ctx_init(ibv_ctx, &ctx);
 				break;
 			}

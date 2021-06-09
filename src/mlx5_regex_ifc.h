@@ -415,9 +415,9 @@ struct mlx5_ifc_query_hca_cap_in_bits {
 	u8         uid[0x10];
 	u8         reserved_at_20[0x10];
 	u8         op_mod[0x10];
-	u8		   other_function[0x1];
-	u8		   reserved_at_30[0xf];
-	u8		   function_id[0x10];
+	u8         other_function[0x1];
+	u8         reserved_at_30[0xf];
+	u8         function_id[0x10];
 	u8         reserved_at_40[0x20];
 };
 
@@ -429,9 +429,9 @@ struct regexp_params_field_select_bits {
 };
 
 struct mlx5_ifc_regexp_params_bits {
-	u8         db_mkey_free[0x1];
-	u8         reserved_at_0[0x1e];
-	u8         stop_engine[0x1];
+	u8 db_mkey_free[0x1];
+	u8 reserved_at_0[0x1e];
+	u8 stop_engine[0x1];
 	u8 db_mkey[0x20];
 	u8 db_mkey_va[0x40];
 	u8 rof_mkey[0x20];
@@ -443,10 +443,8 @@ struct mlx5_ifc_regexp_params_bits {
 struct mlx5_ifc_set_regexp_params_in_bits {
 	u8         opcode[0x10];
 	u8         uid[0x10];
-
 	u8         reserved_at_20[0x10];
 	u8         op_mod[0x10];
-
 	u8         reserved_at_40[0x18];
 	u8         engine_id[0x8];
 	struct regexp_params_field_select_bits field_select;
@@ -456,7 +454,6 @@ struct mlx5_ifc_set_regexp_params_in_bits {
 struct mlx5_ifc_set_regexp_params_out_bits {
 	u8         status[0x8];
 	u8         reserved_at_8[0x18];
-
 	u8         syndrome[0x20];
 	u8         reserved_at_18[0x40];
 };
@@ -464,10 +461,8 @@ struct mlx5_ifc_set_regexp_params_out_bits {
 struct mlx5_ifc_query_regexp_params_in_bits {
 	u8         opcode[0x10];
 	u8         uid[0x10];
-
 	u8         reserved_at_20[0x10];
 	u8         op_mod[0x10];
-
 	u8         reserved_at_40[0x18];
 	u8         engine_id[0x8];
 	u8         reserved[0x20];
@@ -476,7 +471,6 @@ struct mlx5_ifc_query_regexp_params_in_bits {
 struct mlx5_ifc_query_regexp_params_out_bits {
 	u8         status[0x8];
 	u8         reserved_at_8[0x18];
-
 	u8         syndrome[0x20];
 	u8         reserved[0x40];
 	struct mlx5_ifc_regexp_params_bits regexp_params;
@@ -553,8 +547,8 @@ struct mlx5_ifc_mkc_bits {
 	u8         reserved_at_120[0x80];
 	u8         translations_octword_size[0x20];
 	u8         reserved_at_1c0[0x19];
-	u8		   relaxed_ordering_read[0x1];
-	u8		   reserved_at_1da[0x1];
+	u8         relaxed_ordering_read[0x1];
+	u8         reserved_at_1da[0x1];
 	u8         log_page_size[0x5];
 	u8         reserved_at_1e0[0x20];
 };
@@ -586,9 +580,9 @@ struct mlx5_ifc_create_mkey_in_bits {
 };
 
 enum {
-	MLX5_MKC_ACCESS_MODE_MTT   = 0x1,
-	MLX5_MKC_ACCESS_MODE_KLM   = 0x2,
-	MLX5_MKC_ACCESS_MODE_KLM_FBS = 0x3,
+	MLX5_MKC_ACCESS_MODE_MTT     = 0x1,
+	MLX5_MKC_ACCESS_MODE_KLM     = 0x2,
+	MLX5_MKC_ACCESS_MODE_KLM_FBS = 0x3
 };
 
 #endif /* MLX5_REGEX_IFC_H */
