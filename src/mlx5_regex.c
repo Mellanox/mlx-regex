@@ -475,8 +475,9 @@ register_database(struct mlx5_regex_ctx *ctx, int engine_id)
 	/* Alloc data - here is a huge page allocation example */
 	ctx->db_ctx[engine_id].mem_desc.ptr = mmap(NULL, db_size, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS | MAP_POPULATE | MAP_HUGETLB, -1, 0);
 
-	if (!ctx->db_ctx[engine_id].mem_desc.ptr) {
-		syslog(LOG_NOTICE, "Allocation failed\n");
+	if (ctx->db_ctx[engine_id].mem_desc.ptr == MAP_FAILED) {
+		syslog(LOG_ERR, "Failed to allocate %uMB from hugepages.\n", (db_size / (1024 * 1024)));
+		syslog(LOG_ERR, "Ensure hugepages are enabled.\n");
 		return -ENOMEM;
 	}
 
