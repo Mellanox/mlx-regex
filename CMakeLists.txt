@@ -39,6 +39,9 @@ add_subdirectory (src)
 # Directory with systemd unit files
 set (SYSTEMD_UNIT_DIR "/etc/systemd/system/")
 
+# Directory for mlx-regex huge pages script
+set (USR_SBIN_DIR "/usr/sbin")
+
 # Macro for installing configuration files
 function(install_conf src dest)
   if(NOT IS_ABSOLUTE "${src}")
@@ -70,3 +73,8 @@ endfunction(install_conf)
 
 # Install systemd unit files 
 install_conf (./mlx-regex.service ${SYSTEMD_UNIT_DIR})
+
+# Install hugepages script
+install(FILES contrib/mlx_regex_setup_hugepages.sh
+        DESTINATION ${USR_SBIN_DIR}
+        PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)

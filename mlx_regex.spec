@@ -32,6 +32,7 @@ make install DESTDIR=%{buildroot}
 %files
 /usr/bin/mlx-regex
 /etc/systemd/system/mlx-regex.service
+/usr/sbin/mlx_regex_setup_hugepages.sh
 
 %doc
 
