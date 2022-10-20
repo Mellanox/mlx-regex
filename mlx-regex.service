@@ -6,7 +6,7 @@ Type=simple
 ExecStart=/usr/bin/mlx-regex
 RemainAfterExit=no
 ExecReload=/bin/kill -HUP $MAINPID
-ExecStartPre=/usr/sbin/setup_hugepages.sh
+ExecStartPre=/usr/sbin/mlx_regex_setup_hugepages.sh
 
 [Install]
 WantedBy=multi-user.target
