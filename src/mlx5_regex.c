@@ -215,6 +215,7 @@ rxp_create_mkey(struct mlx5_regex_ctx *ctx, void *ptr, size_t size,
 	uint32_t translation_size;
 	uint32_t in[DEVX_ST_SZ_DW(create_mkey_in)] = {0};
 	uint32_t out[DEVX_ST_SZ_DW(create_mkey_out)] = {0};
+	struct mlx5dv_devx_umem_in umem_in = {0};
 
 	pgsize = sysconf(_SC_PAGESIZE);
 	if (pgsize == (size_t) -1) {
@@ -228,8 +229,17 @@ rxp_create_mkey(struct mlx5_regex_ctx *ctx, void *ptr, size_t size,
 		return -ENOMEM;
 	}
 
+	/* Need to ensure umem start point matches page offset in mkey start address. */
+	/* The virtual address (mkey.start_addr) is 2MB page aligned, so need to set  */
+	/* pgsz_bitmap to indicate 2MB page alignment to ensure mkey creation is      */
+	/* successful */
+	umem_in.addr = ptr;
+	umem_in.size = size;
+	umem_in.access = access;
+	umem_in.pgsz_bitmap = 1 << 21;
+
 	/* Register the memory. */
-	mkey->umem = mlx5dv_devx_umem_reg(ctx->ibv_ctx, ptr, size, access);
+	mkey->umem = mlx5dv_devx_umem_reg_ex(ctx->ibv_ctx, &umem_in);
 
 	if (!mkey->umem) {
 		syslog(LOG_ERR, "Failed to register memory!\n");
