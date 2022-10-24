@@ -1,5 +1,6 @@
 [Unit]
 Description=Regex daemon for BlueField 2
+After=openibd.service
 
 [Service]
 Type=simple
