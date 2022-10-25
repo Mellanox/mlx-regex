@@ -4,7 +4,7 @@
 #   hugepages @ Ubuntu
 
 # Amount of hugepage memory needed by mlx-regex daemon
-min_hugemem=${MIN_HUGEMEM:-258M}
+min_hugemem=${MIN_HUGEMEM:-500M}
 
 # Units of memory for mlx-regex daemon
 case $(echo ${min_hugemem: -1}) in
