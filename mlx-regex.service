@@ -1,5 +1,5 @@
 [Unit]
-Description=Regex daemon for BlueField 2
+Description=Regex daemon for BlueField
 After=openibd.service
 
 [Service]
