@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-only
-# Copyright (C) 2020 Mellanox Technologies. All Rights Reserved.
+# Copyright (c) 2020-2023 NVIDIA CORPORATION & AFFILIATES, ALL RIGHTS RESERVED.
 #
 
 Name:           mlx-regex
@@ -9,7 +9,7 @@ Release:        1%{?dist}
 License:        BSD
 URL:            mellanox.com
 Source0:        mlx-regex-1.2.tar.gz
-Summary:        Userspace regex service for Mellanox Bluefield 2
+Summary:        Userspace regex service for Nvidia Bluefield
 BuildRequires:  gcc, cmake, make
 BuildRequires:  systemd
 
