@@ -365,8 +365,6 @@ mlx5_devx_regex_database_disconnect(void *ctx, uint8_t engine, uint32_t db_mkey,
 
 	DEVX_SET(set_regexp_params_in, in, opcode, MLX5_CMD_SET_REGEX_PARAMS);
 	DEVX_SET(set_regexp_params_in, in, engine_id, engine);
-	DEVX_SET(set_regexp_params_in, in, regexp_params.stop_engine, 1);
-	DEVX_SET(set_regexp_params_in, in, field_select.stop_engine, 1);
 	DEVX_SET(set_regexp_params_in, in, regexp_params.db_mkey, db_mkey);
 	DEVX_SET(set_regexp_params_in, in, regexp_params.db_mkey_free, 1);
 	DEVX_SET64(set_regexp_params_in, in, regexp_params.db_mkey_va, db_mkey_va);
@@ -389,11 +387,6 @@ mlx5_regex_database_set(struct mlx5_regex_ctx *ctx, int engine_id)
 
 	DEVX_SET(set_regexp_params_in, in, opcode, MLX5_CMD_SET_REGEX_PARAMS);
 	DEVX_SET(set_regexp_params_in, in, engine_id, engine_id);
-
-	DEVX_SET(set_regexp_params_in, in, regexp_params.stop_engine, 1);
-	DEVX_SET(set_regexp_params_in, in, field_select.stop_engine, 1);
-
-
 	DEVX_SET(set_regexp_params_in, in, regexp_params.db_mkey, ctx->db_ctx[engine_id].mem_desc.mkey->id);
 	DEVX_SET64(set_regexp_params_in, in, regexp_params.db_mkey_va, (uint64_t)ctx->db_ctx[engine_id].mem_desc.ptr);
 	/*
