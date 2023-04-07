@@ -468,6 +468,15 @@ mlx5_regex_register_read(struct ibv_context *ctx, int engine_id,
 	return 0;
 }
 */
+
+/* Check if Linux distribution supports the MAP_HUGE_SHIFT define. */
+/* We will allocate from the 2M hugepage pool.                     */
+#ifdef MAP_HUGE_SHIFT
+#define MLX_REGEX_MAP_HUGE_2MB (21 << MAP_HUGE_SHIFT)
+#else
+#define MLX_REGEX_MAP_HUGE_2MB 0
+#endif
+
 static int
 register_database(struct mlx5_regex_ctx *ctx, int engine_id)
 {
@@ -476,7 +485,7 @@ register_database(struct mlx5_regex_ctx *ctx, int engine_id)
 	size_t db_size = 1 << 27;
 
 	/* Alloc data - here is a huge page allocation example */
-	ctx->db_ctx[engine_id].mem_desc.ptr = mmap(NULL, db_size, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS | MAP_POPULATE | MAP_HUGETLB, -1, 0);
+	ctx->db_ctx[engine_id].mem_desc.ptr = mmap(NULL, db_size, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS | MAP_POPULATE | (MAP_HUGETLB | MLX_REGEX_MAP_HUGE_2MB), -1, 0);
 
 	if (ctx->db_ctx[engine_id].mem_desc.ptr == MAP_FAILED) {
 		syslog(LOG_ERR, "Failed to allocate %uMB from hugepages.\n", (db_size / (1024 * 1024)));
