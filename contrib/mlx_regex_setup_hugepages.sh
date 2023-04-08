@@ -23,11 +23,12 @@ case $(echo ${min_hugemem: -1}) in
         ;;
 esac
 
-# Have any hugepages been configured yet
-hugetlb=$(grep Hugetlb /proc/meminfo | awk '{ print $2 }')
+# Have any 2M hugepages been configured yet
+num_2m_hugepages=$(cat /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages)
+num_2m_hugepages_free=$(cat /sys/kernel/mm/hugepages/hugepages-2048kB/free_hugepages)
 
-# Check if existing hugepages can be used or if pool needs adjusted
-if [ $hugetlb -gt 0 ]; then
+# Check if existing 2M hugepages can be used or if pool needs adjusted
+if [ $num_2m_hugepages -gt 0 ]; then
     if [ $unit = "k" ]; then
         required_size=${min_hugemem%?}
     elif [ $unit = "m" ]; then
@@ -36,15 +37,12 @@ if [ $hugetlb -gt 0 ]; then
 	required_size=$((${min_hugemem%?} * 1024 * 1024))
     fi
 
-    hugepagesize=$(grep Hugepagesize /proc/meminfo | awk '{ print $2 }')
-    hugePages_Free=$(grep HugePages_Free /proc/meminfo | awk '{ print $2 }')
-
-    huge_free_size=$((hugepagesize * hugePages_Free))
+    huge_free_size=$((2048 * num_2m_hugepages_free))
 
     if [ $huge_free_size -ge $required_size ]; then
         exit 0
     fi
 fi
 
-# Adjust the pool size
-exec /usr/bin/hugeadm --pool-pages-min DEFAULT:+${min_hugemem}
+# Adjust the 2M pool size
+exec /usr/bin/hugeadm --pool-pages-min 2M:+${min_hugemem}
