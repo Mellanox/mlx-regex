@@ -23,6 +23,18 @@ case $(echo ${min_hugemem: -1}) in
         ;;
 esac
 
+# Check if there is a mount point for 2M hugepages, create if it does not exist.
+list_all_mounts=$(/usr/bin/hugeadm --list-all-mounts)
+if [[ $list_all_mounts != *"pagesize=2M"* ]]; then
+    /usr/bin/hugeadm --create-mounts
+    # Check if mount point created successfully.
+    list_all_mounts=$(/usr/bin/hugeadm --list-all-mounts)
+    if [[ $list_all_mounts != *"pagesize=2M"* ]]; then
+        echo "[ERROR]: Unable to create mount point for 2M hugepages!"
+        exit 1
+    fi
+fi
+
 # Have any 2M hugepages been configured yet
 num_2m_hugepages=$(cat /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages)
 num_2m_hugepages_free=$(cat /sys/kernel/mm/hugepages/hugepages-2048kB/free_hugepages)
